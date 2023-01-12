@@ -17,7 +17,6 @@ export const FeedbackProvider = ({ children }) => {
 
   // Fetch feedback
   const fetchFeedback = async () => {
-    console.log(process.env.REACT_APP_BASE_URL);
     const response = await fetch(
       `${process.env.REACT_APP_BASE_URL}:5000/feedback?_sort=id&_order=desc`,
     );
