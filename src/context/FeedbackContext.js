@@ -17,7 +17,10 @@ export const FeedbackProvider = ({ children }) => {
 
   // Fetch feedback
   const fetchFeedback = async () => {
-    const response = await fetch('/feedback?_sort=id&_order=desc');
+    console.log(process.env.REACT_APP_BASE_URL);
+    const response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}:5000/feedback?_sort=id&_order=desc`,
+    );
     const data = await response.json();
 
     setFeedback(data);
@@ -26,13 +29,16 @@ export const FeedbackProvider = ({ children }) => {
 
   // Add new feedback
   const addFeedback = async (newFeedback) => {
-    const response = await fetch('/feedback', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}:5000/feedback`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newFeedback),
       },
-      body: JSON.stringify(newFeedback),
-    });
+    );
 
     const data = await response.json();
 
@@ -42,19 +48,21 @@ export const FeedbackProvider = ({ children }) => {
 
   // Update feedback item
   const updateFeedback = async (id, updItem) => {
-    const response = await fetch(`/feedback/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}:5000/feedback/${id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updItem),
       },
-      body: JSON.stringify(updItem),
-    });
+    );
 
     const data = response.json();
 
-    setFeedback(
-      feedback.map((item) => (item.id === id ? { ...item, ...data } : item)),
-    );
+    setFeedback(feedback.map((item) => (item.id === id ? data : item)));
+    setFeedbackEdit({ item: {}, edit: false });
   };
 
   // Set item to be updated
@@ -65,7 +73,9 @@ export const FeedbackProvider = ({ children }) => {
   // Delete existing feedback
   const deleteFeedback = async (id) => {
     if (window.confirm('Are you sure you want to delete?')) {
-      await fetch(`/feedback/${id}`, { method: 'DELETE' });
+      await fetch(`${process.env.REACT_APP_BASE_URL}:5000/feedback/${id}`, {
+        method: 'DELETE',
+      });
       setFeedback(feedback.filter((item) => item.id !== id));
     }
   };
